@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+  <title>Lazer Warfare</title>
+  <link rel="stylesheet" href="../assets/less/laser-warfare/base.css"/>
+  <script src="../assets/lib/angular/angular.min.js"></script>
+  <script src="../assets/js/controllers.js"></script>
+  <script src="../assets/js/services.js"></script>
+  <script src="../assets/js/app.js"></script>
+
+</head>
+<body ng-app="lasertag" ng-controller="homeCtrl">
+
+
+  <img src="assets/img/loading.png" class="loading" ng-hide="ready">
+  <div id="loadingText" ng-hide="ready">Loading</div>
+
+  <div id='content-body' ng-show="ready">
+    <img src="assets/img/logo.png">
+
+    <div style="margin-top:2%">
+      <div ng-show="show == 'games'">
+        <header>
+          <img class='pagination' ng-class='{disabled:currentPage==0}' src='../assets/img/prev.png' width='23px' ng-click="currentPage=currentPage-1">
+          Review a Game
+          <img class='pagination' ng-class='{disabled:currentPage>=games.length/pageSize - 1}' src='../assets/img/next.png' width='23px' ng-click="currentPage=currentPage+1">
+        </header>
+      	<div class="review-list" id="gameList" ng-repeat="game in games|startFrom:currentPage*pageSize|limitTo:pageSize" ng-click="goto('review',game)">
+          Time Played: {$ game.time_played|date:'MM/dd/yyyy @ h:mma'  $}, Mode: {$ modes[game.mode]  $}
+        </div>
+      </div>
+        <div class="review-data" ng-show="show == 'review'">
+
+        <div ng-show="reviewGame.mode == 'TEAMS'" ng-repeat="team in reviewGame.teams">
+          <table class="new-game-table">
+            <thead>
+              <div class="teams-header">Team : {$ team.name $} --- Score : {$ team.score $}</div>
+              <tr>
+                <th>Place</th>
+                <th>Username</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="review-list" ng-repeat="player in reviewGame.players|filter:{team_name:team.name}" ng-click="goto('stats',player)">
+                <td>{$ $index + 1 $}</td>
+                <td>{$ player.username $}</td>
+                <td>{$ player.score $}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div ng-hide="reviewGame.mode == 'TEAMS'">
+          <h2>Mode: {$ modeDisplayByVal(reviewGame.mode) $} ---  State: {$ reviewGame.state $}</h2>
+            <table class="new-game-table">
+              <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Username</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="review-list" ng-repeat="player in reviewGame.players" ng-click="goto('stats',player)">
+                  <td>{$ $index + 1 $}</td>
+                  <td>{$ player.username  $}</td>
+                  <td>{$ player.score  $}</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <div class="sp-button" ng-click="goto('games')">Back</div>
+
+      </div>
+	  </div>
+
+    <div class="review-data" ng-show="show == 'stats'">
+      <h2>{$ playerStats.username $}</h2>
+      <table class="new-game-table">
+        <thead>
+          <tr>
+            <th>High Score</th>
+            <th>Score Total</th>
+            <th>Shot Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="review-list border-bottom">
+            <td>{$ playerStats.high_score $}</td>
+            <td>{$ playerStats.score_total $}</td>
+            <td>{$ playerStats.shot_perc $}%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="new-game-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Time Played</th>
+            <th>Score</th>
+            <th>Shots Fired</th>
+            <th>Hits Landed</th>
+            <th>Hits Taken</th>
+            <th>Team</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="review-list" ng-repeat="instance in playerStats.instances|orderBy:'-time_played'">
+            <td>{$ instance.rank $}</td>
+            <td>{$ instance.time_played|date:'MM/dd/yyyy @ h:mma' $}</td>
+            <td>{$ instance.score $}</td>
+            <td>{$ instance.num_shots  $}</td>
+            <td>{$ instance.hits_landed  $}</td>
+            <td>{$ instance.hits_taken  $}</td>
+            <td>{$ instance.team_name || 'None' $}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="sp-button" ng-click="goto('review')">Back</div>
+    </div>
+
+  </div>
+
+  <div id="Stage" class="EDGE-2633143"></div>
+
+  </body>
+</html>
